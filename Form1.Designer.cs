@@ -154,12 +154,12 @@
             this.btnReset.Enabled = false;
             this.btnReset.Location = new System.Drawing.Point(868, 48);
             this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(75, 23);
+            this.btnReset.Size = new System.Drawing.Size(85, 24);
             this.btnReset.TabIndex = 10;
             this.btnReset.Text = "Reset Board";
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Visible = false;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click_1);
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // frmMain
             // 

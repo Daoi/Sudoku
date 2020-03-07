@@ -11,9 +11,9 @@ namespace Sudoku
         int waitBadValue = 50;
         int waitValidValue = 100;
         int waitReset = 0;
-        int[,] originalBoard;
         int[,] modifiedBoard;
         int[,] displayBoard;
+        int[,] originalBoard;
         Button[,] cells;
         int N; //Board Size(NxN)
         int regionSize;
@@ -29,8 +29,8 @@ namespace Sudoku
             diagValues();
             placeRemaining(0, regionSize);
             modifiedBoard = displayBoard;
-            originalBoard = displayBoard;
             removeValues();
+            originalBoard = (int[,])displayBoard.Clone();
         }
 
         //Start creating board values
@@ -147,7 +147,7 @@ namespace Sudoku
             }
             return true;
         }
-
+        
         //Check row
         private Boolean validForRow(int i, int val)
         {
@@ -307,11 +307,17 @@ namespace Sudoku
             return true;
         }
 
+        public void setTimers()
+        {
+            waitBadValue = 0;
+            waitValidValue = 0;
+            waitReset = 0;
+        }
+
         public void wait(int milliseconds)
         {
-            System.Windows.Forms.Timer timer1 = new System.Windows.Forms.Timer();
+            Timer timer1 = new Timer();
             if (milliseconds == 0 || milliseconds < 0) return;
-            //Console.WriteLine("start wait timer");
             timer1.Interval = milliseconds;
             timer1.Enabled = true;
             timer1.Start();
@@ -319,7 +325,6 @@ namespace Sudoku
             {
                 timer1.Enabled = false;
                 timer1.Stop();
-                //Console.WriteLine("stop wait timer");
             };
             while (timer1.Enabled)
             {

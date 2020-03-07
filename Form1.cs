@@ -200,32 +200,19 @@ namespace Sudoku
             btnCheck.Enabled = false;
             btnReset.Enabled = false;
             pnlBoard.Controls.OfType<Button>().ToList().ForEach(btn => btn.Enabled = false);
-            MessageBox.Show("Red = Conflict found" + "\r\n" + "Cyan = Currently Valid");
-            solvedBoard = game.solve();
-            btnNewBoard.Enabled = true ;
-            btnCheck.Enabled = true;
-            pnlBoard.Controls.OfType<Button>().ToList().ForEach(btn => btn.Enabled = true);
 
-
-
-
-            /*StringBuilder sb = new StringBuilder("[[");
-
-            for (int i = 0; i < cardSize; i++)
+            DialogResult dr = MessageBox.Show("Would you like the solve process to be visualized?",
+                    "Solve", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.No)
             {
-                for (int j = 0; j < cardSize; j++)
-                {
-                    sb.Append(solvedBoard[i, j].ToString() + ",");
-                }
-                sb.Length--;
-                sb.Append("]," + "\r\n");
+                game.setTimers();
             }
-            //Remove newline character/','
-            sb.Length--;
-            sb.Length--;
-            sb.Length--;
-            sb.Append("]");
-            MessageBox.Show(sb.ToString(), "");*/
+
+            solvedBoard = game.solve();
+
+            btnReset.Enabled = true;
+            btnNewBoard.Enabled = true;
+            btnCheck.Enabled = true;
         }
 
         private void btnNewBoard_Click(object sender, EventArgs e)
@@ -263,7 +250,7 @@ namespace Sudoku
             difficulty = rng.Next(62, 72);
         }
 
-        private void btnReset_Click_1(object sender, EventArgs e)
+        private void btnReset_Click(object sender, EventArgs e)
         {
             int[,] originalBoard = game.getOriginal();
             for(int i = 0; i < cardSize; i++)
@@ -273,6 +260,13 @@ namespace Sudoku
                     boardCell[i, j].Text = originalBoard[i, j].ToString();
                 }
             }
+            pnlBoard.Controls.OfType<Button>().ToList().ForEach(btn => reenable(btn));
+        }
+
+        private void reenable(Button btn)
+        {
+            if(btn.Text == "0"){ btn.Enabled = true;}
+            else { btn.Enabled = false; }
         }
     }
 }
