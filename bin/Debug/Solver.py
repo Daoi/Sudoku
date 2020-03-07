@@ -1,3 +1,4 @@
+import sys
 def sudoku(puzzle):
     solve(0, 0, puzzle)
     return puzzle
@@ -43,3 +44,10 @@ def canPlace(puzzle, row, col, digit):
                 return False
 
     return True
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: Error passing arguments")
+        sys.exit(0)
+    sudoku(sys.argv[1])

@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Sudoku
 {
     public partial class frmMain : Form
     {
-        
-        SudokuBoard a = new SudokuBoard(9, 43);
+
+        SudokuBoard game;
+        Random rng = new Random();
+        int difficulty = 43;
         int cardCellWidth;
         int cardCellHeight;
         int barWidth = 3;  // Width or thickness of horizontal and vertical bars
@@ -18,8 +18,9 @@ namespace Sudoku
         int ycardUpperLeft = 0;
         int padding = 2;
         int cardSize;
-        int[,] originalBoard;
+        int[,] solvedBoard;
         private Button[,] boardCell;
+
         public frmMain()
         {
             InitializeComponent();
@@ -29,11 +30,23 @@ namespace Sudoku
         {
             btnPlay.Enabled = false;
             btnPlay.Visible = false;
+            btnNewBoard.Enabled = true;
+            btnNewBoard.Visible = true;
+            btnCheck.Enabled = true;
+            btnCheck.Visible = true;
+            btnSolve.Enabled = true;
+            btnSolve.Visible = true;
+            btnReset.Enabled = true;
+            btnReset.Visible = true;
+            lblInstructions.Visible = true;
+
+            game = new SudokuBoard(9, difficulty);
             cardSize = 9;
             boardCell = new Button[cardSize, cardSize];
-            originalBoard = new int[cardSize, cardSize];
-            a.printSudoku();
+            solvedBoard = new int[cardSize, cardSize];
+            game.printSudoku();
             generateBoard();
+            game.getCells(ref boardCell);
         }
 
         private void Button_MouseDown(object sender, MouseEventArgs me)
@@ -104,9 +117,8 @@ namespace Sudoku
                     };
 
                     boardCell[row, col].Font = new Font("Arial", 24, FontStyle.Bold);
-                    int value = a.getCellValue(row, col);
+                    int value = game.getCellValue(row, col);
                     boardCell[row, col].Text = value.ToString();
-                    originalBoard[row, col] = value;
                     boardCell[row, col].Name = "btn" + row.ToString() + col.ToString();
                     if (boardCell[row, col].Text != "0")
                     {
@@ -183,15 +195,27 @@ namespace Sudoku
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
+            btnSolve.Enabled = false;
+            btnNewBoard.Enabled = false;
+            btnCheck.Enabled = false;
+            btnReset.Enabled = false;
+            pnlBoard.Controls.OfType<Button>().ToList().ForEach(btn => btn.Enabled = false);
+            MessageBox.Show("Red = Conflict found" + "\r\n" + "Cyan = Currently Valid");
+            solvedBoard = game.solve();
+            btnNewBoard.Enabled = true ;
+            btnCheck.Enabled = true;
+            pnlBoard.Controls.OfType<Button>().ToList().ForEach(btn => btn.Enabled = true);
 
-            //Format for python script
-            StringBuilder sb = new StringBuilder("[[");
+
+
+
+            /*StringBuilder sb = new StringBuilder("[[");
 
             for (int i = 0; i < cardSize; i++)
             {
                 for (int j = 0; j < cardSize; j++)
                 {
-                    sb.Append(originalBoard[i, j].ToString() + ",");
+                    sb.Append(solvedBoard[i, j].ToString() + ",");
                 }
                 sb.Length--;
                 sb.Append("]," + "\r\n");
@@ -201,24 +225,52 @@ namespace Sudoku
             sb.Length--;
             sb.Length--;
             sb.Append("]");
-            //Finish formating
-            File.GetPath
-            runCmd(@"C:\Program Files(x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe", "Solver.py " + sb.ToString());
+            MessageBox.Show(sb.ToString(), "");*/
         }
 
-        private void runCmd(string cmd, string args)
+        private void btnNewBoard_Click(object sender, EventArgs e)
         {
-            ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = cmd;//cmd is full path to python.exe
-            start.Arguments = args;//args is path to .py file and any cmd line args
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            using (Process process = Process.Start(start))
+            game = new SudokuBoard(9, difficulty);
+            pnlBoard.Controls.OfType<Button>().ToList().ForEach(btn => btn.Dispose()); //Get rid of all current buttons
+            cardSize = 9;
+            boardCell = new Button[cardSize, cardSize];
+            solvedBoard = new int[cardSize, cardSize];
+            generateBoard();
+            game.getCells(ref boardCell);
+            btnSolve.Enabled = true;
+            btnReset.Enabled = true;
+
+        }
+
+        private void rbtnEasy_Click(object sender, EventArgs e)
+        {
+            rbtnMedium.Checked = false;
+            rbtnHard.Checked = false;
+            difficulty = rng.Next(30, 45);
+        }
+
+        private void rbtnMedium_Click(object sender, EventArgs e)
+        {
+            rbtnEasy.Checked = false;
+            rbtnHard.Checked = false;
+            difficulty = rng.Next(46, 61);
+        }
+
+        private void rbtnHard_Click(object sender, EventArgs e)
+        {
+            rbtnEasy.Checked = false;
+            rbtnMedium.Checked = false;
+            difficulty = rng.Next(62, 72);
+        }
+
+        private void btnReset_Click_1(object sender, EventArgs e)
+        {
+            int[,] originalBoard = game.getOriginal();
+            for(int i = 0; i < cardSize; i++)
             {
-                using (StreamReader reader = process.StandardOutput)
+                for(int j = 0; j < cardSize; j++)
                 {
-                    string result = reader.ReadToEnd();
-                    Console.Write(result);
+                    boardCell[i, j].Text = originalBoard[i, j].ToString();
                 }
             }
         }
