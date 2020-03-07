@@ -252,6 +252,7 @@ namespace Sudoku
 
         private void btnReset_Click(object sender, EventArgs e)
         {
+            btnSolve.Enabled = true;
             int[,] originalBoard = game.getOriginal();
             for(int i = 0; i < cardSize; i++)
             {
