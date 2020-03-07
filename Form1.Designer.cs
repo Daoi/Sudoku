@@ -82,6 +82,7 @@
             this.btnCheck.Text = "Check";
             this.btnCheck.UseVisualStyleBackColor = true;
             this.btnCheck.Visible = false;
+            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
             // 
             // btnNewBoard
             // 

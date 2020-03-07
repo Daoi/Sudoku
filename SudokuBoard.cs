@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -333,5 +334,59 @@ namespace Sudoku
         }
         //Puzzle Solving End
 
+        //Check for completion
+
+        public static Boolean checkBoard(Button[,] board)
+        {
+            HashSet<string> set;
+            for(int i = 0; i < 9; i++)
+            {
+                set = new HashSet<string>();
+
+                for (int j = 0; j < 9; j++) {
+                    set.Add(board[i, j].Text);
+                }
+                if(set.Count != 9)
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < 9; i++)
+            {
+                set = new HashSet<string>();
+
+                for (int j = 0; j < 9; j++)
+                {
+                    set.Add(board[j, i].Text);
+                }
+                if (set.Count != 9)
+                {
+                    return false;
+                }
+            }
+
+
+            for (int i = 0; i < 3; i++)
+            {
+                for(int j = 0; j < 3; j++)
+                {
+                    set = new HashSet<string>();
+                    for(int x = 0; x < 3; x++)
+                    {
+                        for(int y = 0; y < 3; y++)
+                        {
+                            set.Add(board[3 * i + x, 3 * j + y].Text);
+                        }
+                    }
+                    if (set.Count != 9)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }

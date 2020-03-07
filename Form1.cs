@@ -269,6 +269,18 @@ namespace Sudoku
             if(btn.Text == "0"){ btn.Enabled = true;}
             else { btn.Enabled = false; }
         }
+
+        private void btnCheck_Click(object sender, EventArgs e)
+        {
+            if(SudokuBoard.checkBoard(boardCell))
+            {
+                MessageBox.Show("You won!", "Victory!");
+            }
+            else
+            {
+                MessageBox.Show("Board not valid, try again!", "");
+            }
+        }
     }
 }
 
